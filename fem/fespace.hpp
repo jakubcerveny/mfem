@@ -133,6 +133,7 @@ protected:
    mutable OperatorHandle L2F_nat, L2F_lex;
 
    mutable Array<QuadratureInterpolator*> E2Q_array;
+   mutable Array<FaceQuadratureInterpolator*> E2FQ_array;
 
    long sequence; // should match Mesh::GetSequence
 
@@ -342,6 +343,9 @@ public:
        quadrature point values and/or derivatives (Q-vectors). */
    const FaceQuadratureInterpolator *GetFaceQuadratureInterpolator(
       const IntegrationRule &ir) const;
+
+   const FaceQuadratureInterpolator *GetFaceQuadratureInterpolator(
+      const QuadratureSpace &qs) const;
 
    /// Returns vector dimension.
    inline int GetVDim() const { return vdim; }
@@ -1109,8 +1113,8 @@ public:
        form a matrix at each quadrature point (i.e. the associated
        FiniteElementSpace is a vector space) and their determinants are computed
        and stored in @a q_det. */
-   void Mult(const Vector &e_vec, unsigned eval_flags, const Array<double> &W,
-             Vector &q_val, Vector &q_der, Vector &q_det) const;
+   void Mult(const Vector &e_vec, unsigned eval_flags, //const Array<double> &W,
+             Vector &q_val, Vector &q_der, Vector &q_det, Vector &q_nor) const;
 
    /// Perform the transpose operation of Mult(). (TODO)
    void MultTranspose(unsigned eval_flags, const Array<double> &W, const Vector &q_val,
@@ -1120,26 +1124,28 @@ public:
 
    /// Template compute kernel for 2D.
    template<const int T_VDIM = 0, const int T_ND = 0, const int T_NQ = 0>
-   static void Eval2D(const int NE,
+   static void Eval2D(const int NF,
                       const int vdim,
                       const DofToQuad &maps,
                       const Vector &e_vec,
-                      const Array<double> &W,
+                      // const Array<double> &W,
                       Vector &q_val,
                       Vector &q_der,
                       Vector &q_det,
+                      Vector &q_nor,
                       const int eval_flags);
 
    /// Template compute kernel for 3D.
    template<const int T_VDIM = 0, const int T_ND = 0, const int T_NQ = 0>
-   static void Eval3D(const int NE,
+   static void Eval3D(const int NF,
                       const int vdim,
                       const DofToQuad &maps,
                       const Vector &e_vec,
-                      const Array<double> &W,
+                      // const Array<double> &W,
                       Vector &q_val,
                       Vector &q_der,
                       Vector &q_det,
+                      Vector &q_nor,
                       const int eval_flags);
 };
 
